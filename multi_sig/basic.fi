@@ -1,0 +1,20 @@
+storage map[bytes=>address[]] requests;
+storage address[] owners;
+
+external spend(address to, mutez amount){
+	assert(SENDER == SOURCE);
+	assert(storage.owners.in(SENDER));
+	let bytes requestId = pack(input);
+	let address[] signed = new list(address);
+	if (storage.requests.in(requestId)){
+		signed = storage.requests.get(requestId);
+	}
+	assert(!signed.in(SENDER));
+	signed.push(SENDER);
+	if (signed.length() == owners.length()){
+		transfer(input.to, input.amount);
+		storage.requests.drop(requestId);
+	} else {
+		storage.requests.push(requestId, signed);	
+	}
+}
