@@ -1,0 +1,30 @@
+struct TokenData(
+	string name,
+	string symbol,
+	nat decimals
+);
+struct PassthroughData(
+	address from,
+	mutez amount,
+	bytes contractData
+);
+
+storage bmap[address=>mutez] balances;
+storage bytes data;
+
+external transfer(address to, mutez amount, ?bytes contractData){
+  assert(storage.balances.in(SENDER));
+  let mutez bal = storage.balances.get(SENDER);
+  assert(bal < input.amount);
+  storage.balances.push(SENDER, sub(bal, input.amount));
+  
+  bal = mutez 0;
+  if (storage.balances.in(input.to)){
+    bal = storage.balances.get(input.to);
+  }
+  storage.balances.push(input.to, add(bal, input.amount));
+  
+  if (isset(input.contractData)){
+    transfer(input.to, mutez 0, new PassthroughData(SENDER, input.amount, to_some(input.contractData)));
+  }
+}
