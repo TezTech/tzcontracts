@@ -1,0 +1,24 @@
+struct Subscription(
+	address receiver,
+	mutez amount,
+	int frequency,
+	string reference
+);
+storage map[bytes=>timestamp] subscriptions;
+
+entry add(Subscription sub){
+	assert(SENDER == OWNER && SENDER == SOURCE);
+	storage.subscriptions.push(pack(input.sub), NOW);
+}
+
+entry remove(Subscription sub){
+	assert(SENDER == OWNER && SENDER == SOURCE);
+	storage.subscriptions.drop(pack(input.sub));
+}
+
+entry charge(Subscription sub){
+	let bytes id = pack(input.sub);
+	assert(NOW >= storage.subscriptions.get(id));
+	storage.subscriptions.push(id, add(NOW, input.sub.frequency));
+	transfer(input.sub.receiver, input.sub.amount);
+}
