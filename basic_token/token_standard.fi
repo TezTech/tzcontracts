@@ -12,7 +12,7 @@ struct PassthroughData(
 storage bmap[address=>mutez] balances;
 storage bytes data;
 
-external transfer(address to, mutez amount, ?bytes contractData){
+entry transfer(address to, mutez amount, ?bytes contractData){
   assert(storage.balances.in(SENDER));
   let mutez bal = storage.balances.get(SENDER);
   assert(bal < input.amount);
@@ -23,7 +23,7 @@ external transfer(address to, mutez amount, ?bytes contractData){
     bal = storage.balances.get(input.to);
   }
   storage.balances.push(input.to, add(bal, input.amount));
-  
+	
   if (isset(input.contractData)){
     transfer(input.to, mutez 0, new PassthroughData(SENDER, input.amount, to_some(input.contractData)));
   }
