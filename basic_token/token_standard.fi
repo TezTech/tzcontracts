@@ -9,13 +9,13 @@ struct PassthroughData(
 	bytes contractData
 );
 
-storage bmap[address=>mutez] balances;
-storage bytes data;
+storage map[address=>mutez] balances;
+storage TokenData data;
 
 entry transfer(address to, mutez amount, ?bytes contractData){
   assert(storage.balances.in(SENDER));
   let mutez bal = storage.balances.get(SENDER);
-  assert(bal < input.amount);
+  assert(bal >= input.amount);
   storage.balances.push(SENDER, sub(bal, input.amount));
   
   bal = mutez 0;
