@@ -4,10 +4,10 @@ storage set[address] owners;
 
 entry default;
 
-entry spend(address to, mutez amount){
+entry spend(address to, mutez amount, string reference){
 	assert(SENDER == SOURCE);
 	assert(storage.owners.in(SENDER));
-	let bytes requestId = pack(input);
+	let bytes requestId = hash(pack(input));
 	let set[address] signed = new set(address);
 	if (storage.requests.in(requestId)){
 		signed = storage.requests.get(requestId);
