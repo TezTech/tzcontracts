@@ -1,5 +1,8 @@
 storage map[bytes=>set[address]] requests;
+storage nat threshold;
 storage set[address] owners;
+
+entry default(){}
 
 entry spend(address to, mutez amount){
 	assert(SENDER == SOURCE);
@@ -11,7 +14,7 @@ entry spend(address to, mutez amount){
 	}
 	assert(!signed.in(SENDER));
 	signed.push(SENDER);
-	if (signed.length() == storage.owners.length()){
+	if (signed.length() == storage.threshold){
 		storage.requests.drop(requestId);
 		transfer(input.to, input.amount);
 	} else {
