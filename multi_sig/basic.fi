@@ -1,4 +1,4 @@
-storage map[bytes=>set[address]] requests;
+storage bmap[bytes=>set[address]] requests;
 storage nat threshold;
 storage set[address] owners;
 
