@@ -2,7 +2,7 @@ storage map[bytes=>set[address]] requests;
 storage nat threshold;
 storage set[address] owners;
 
-entry default(){}
+entry default;
 
 entry spend(address to, mutez amount){
 	assert(SENDER == SOURCE);
