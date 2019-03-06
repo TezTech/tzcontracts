@@ -1,0 +1,57 @@
+struct Proposal (
+    string description,
+    int votes
+);
+
+storage map[address=>bool] voter;
+storage map[int=>Proposal] ballot;
+storage string info;
+
+entry addAuthorizedVoter(address addr){
+   if (SENDER == OWNER) {
+       storage.voter.push(input.addr, bool false);
+   } else {
+       throw(string "Not authorized to add a voter.");
+   }
+}
+
+entry addProposal(int id, Proposal proposal){
+   if (SENDER == OWNER) {
+       storage.ballot.push(input.id, input.proposal);
+   } else {
+        throw(string "Not authorized to add a ballet.");
+   }
+}
+
+entry addInfo(string desc){
+    if (SENDER == OWNER) {
+        storage.info = input.desc;
+    } else {
+        throw(string "Not authorized to set description.");
+    }
+}
+
+entry placeVote(int vote){
+
+   if (in(storage.voter, SENDER) == bool false) {
+       throw(string "You are not authorized to vote.");
+   } 
+   
+   if (in(storage.ballot, input.vote) == bool false) {
+       throw(string "No proposal exists for your vote.");
+   }
+  
+   
+   let bool myVote = storage.voter.get(SENDER);
+   let Proposal proposal = storage.ballot.get(input.vote);
+   
+   if (myVote == bool false) {
+        myVote = bool true;
+        
+        proposal.votes.add(int 1);
+        storage.ballot.push(input.vote, proposal);
+        storage.voter.push(SENDER, myVote);
+   } else {
+       throw(string "You have already voted. Voters may only vote once.");
+   }
+}
