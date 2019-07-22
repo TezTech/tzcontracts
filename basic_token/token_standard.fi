@@ -9,7 +9,7 @@ struct PassthroughData(
 	bytes contractData
 );
 
-storage map[address=>mutez] balances;
+storage bmap[address=>mutez] balances;
 storage TokenData data;
 
 entry transfer(address to, mutez amount, ?bytes contractData){
